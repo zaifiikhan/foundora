@@ -21,10 +21,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         onPressed: () {
           _showReportOptions(context);
         },
-        backgroundColor: Theme.of(context).primaryColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+            side: BorderSide(color: Colors.black,width: 2)),
+        backgroundColor: Color(0xfffB9710D),
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        icon: const Icon(Icons.add),
-        label: const Text("Report Item"),
+        icon: const Icon(Icons.add,color: Colors.white,),
+        label: const Text("Report Item", style: TextStyle(color: Colors.white),),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -43,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Text(
                           "Foundora",
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: Theme.of(context).primaryColor,
+                            color: Colors.white,
                             fontWeight: FontWeight.w900,
                           ),
                         ),
@@ -230,12 +233,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         avatar: Icon(
                           icon,
                           size: 16,
-                          color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         label: Text(
                           cat,
                           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
+                            // Sets the text color to light orange when tapped
+                            color: isSelected ? Colors.orange.shade300 : Theme.of(context).colorScheme.onSurface,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
@@ -272,7 +276,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: Text(
                         "See All",
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: Theme.of(context).primaryColor,
+                          color: Colors.white,
                         ),
                       ),
                     ),

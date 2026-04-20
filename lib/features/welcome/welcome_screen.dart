@@ -20,7 +20,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: AppSpacing.xl),
+            const SizedBox(height: 150),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Column(
@@ -62,9 +62,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.xl),
-            const SizedBox(height: AppSpacing.lg),
-            Padding(
+
+        /*   Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,8 +105,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: AppSpacing.xl),
+            ), */
+            const SizedBox(height: 150),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Column(
@@ -135,7 +134,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Row(
+           /*       Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
@@ -157,7 +156,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       ),
                     ],
-                  ),
+                  ), */
                 ],
               ),
             ),
