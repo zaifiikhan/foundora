@@ -11,6 +11,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool _isLogin = true;
+  bool _isAdminMode = false; // Added state for admin toggle
 
   @override
   Widget build(BuildContext context) {
@@ -152,6 +153,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     child: Text(
                       "Forgot Password?",
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontSize: 12,
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
@@ -163,17 +165,24 @@ class _AuthScreenState extends State<AuthScreen> {
 
               const SizedBox(height: AppSpacing.lg),
 
+              // Main Action Button (Updated with Admin routing and text)
               SizedBox(
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    context.go('/dashboard');
+                    if (_isAdminMode) {
+                      context.go('/admin-dashboard');
+                    } else {
+                      context.go('/dashboard');
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
                   ),
                   child: Text(
-                    _isLogin ? "Sign In to Foundora" : "Create Account",
+                    _isLogin
+                        ? (_isAdminMode ? "Sign In to Admin Panel" : "Sign In to Foundora")
+                        : (_isAdminMode ? "Create Admin Account" : "Create Account"),
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
@@ -201,7 +210,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
               Row(
                 children: [
-                  Expanded(child: _SocialButton(label: "Google", icon: Icons.g_mobiledata)), // Using icon as placeholder for logo
+                  Expanded(child: _SocialButton(label: "Google", icon: Icons.g_mobiledata)),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(child: _SocialButton(label: "Apple", icon: Icons.apple)),
                 ],
@@ -212,6 +221,28 @@ class _AuthScreenState extends State<AuthScreen> {
               // Footer
               Column(
                 children: [
+                  // --- Admin Toggle Button ---
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _isAdminMode = !_isAdminMode;
+                      });
+                    },
+                    child: Text(
+                      _isAdminMode
+                          ? "Return to Student/User Login"
+                          : (_isLogin ? "Login as an Admin" : "Sign up as an Admin"),
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontSize: 14,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+
+                  // Standard Don't Have Account Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -236,6 +267,8 @@ class _AuthScreenState extends State<AuthScreen> {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),
+
+                  // Language Selector
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
                     decoration: BoxDecoration(
@@ -344,7 +377,7 @@ class _SocialButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 20), // Placeholder for image
+              Icon(icon, size: 20),
               const SizedBox(width: AppSpacing.sm),
               Text(
                 label,
