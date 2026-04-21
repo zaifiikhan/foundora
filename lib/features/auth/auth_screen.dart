@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme.dart';
+import '../../nav.dart'; // Added to access AppRouter.isAdmin
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -170,8 +171,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
+                    // MOCK AUTH: Set global admin state based on toggle
+                    AppRouter.isAdmin = _isAdminMode;
+
                     if (_isAdminMode) {
-                      context.go('/admin-dashboard');
+                      context.go('/admin'); // Corrected path to exactly match nav.dart
                     } else {
                       context.go('/dashboard');
                     }

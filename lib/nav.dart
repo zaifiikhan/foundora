@@ -12,6 +12,9 @@ import 'features/admin/admin_screen.dart';
 import 'features/profile/profile_screen.dart';
 
 class AppRouter {
+  // Global mock state to determine if the logged-in user is an admin
+  static bool isAdmin = false;
+
   static final GoRouter router = GoRouter(
     initialLocation: '/',
     routes: [
@@ -79,34 +82,38 @@ class ScaffoldWithBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Dynamically build items based on admin status
+    final List<BottomNavigationBarItem> navItems = [
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.home_outlined),
+        activeIcon: Icon(Icons.home_rounded),
+        label: 'Home',
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.auto_awesome_outlined),
+        activeIcon: Icon(Icons.auto_awesome_rounded),
+        label: 'AI Match',
+      ),
+      if (AppRouter.isAdmin) // Only show if user is an admin
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.admin_panel_settings_outlined),
+          activeIcon: Icon(Icons.admin_panel_settings_rounded),
+          label: 'Admin',
+        ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.person_outline_rounded),
+        activeIcon: Icon(Icons.person_rounded),
+        label: 'Profile',
+      ),
+    ];
+
     return Scaffold(
       body: child,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _calculateSelectedIndex(context),
         onTap: (int idx) => _onItemTapped(idx, context),
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home_rounded),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.auto_awesome_outlined),
-            activeIcon: Icon(Icons.auto_awesome_rounded),
-            label: 'AI Match',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.admin_panel_settings_outlined),
-            activeIcon: Icon(Icons.admin_panel_settings_rounded),
-            label: 'Admin',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline_rounded),
-            activeIcon: Icon(Icons.person_rounded),
-            label: 'Profile',
-          ),
-        ],
+        items: navItems,
       ),
     );
   }
@@ -115,25 +122,45 @@ class ScaffoldWithBottomNavBar extends StatelessWidget {
     final String location = GoRouterState.of(context).uri.path;
     if (location.startsWith('/dashboard')) return 0;
     if (location.startsWith('/matching')) return 1;
-    if (location.startsWith('/admin')) return 2;
-    if (location.startsWith('/profile')) return 3;
+
+    // Adjust indexes based on whether the Admin tab is present
+    if (AppRouter.isAdmin) {
+      if (location.startsWith('/admin')) return 2;
+      if (location.startsWith('/profile')) return 3;
+    } else {
+      if (location.startsWith('/profile')) return 2;
+    }
     return 0;
   }
 
   void _onItemTapped(int index, BuildContext context) {
-    switch (index) {
-      case 0:
-        context.go('/dashboard');
-        break;
-      case 1:
-        context.go('/matching');
-        break;
-      case 2:
-        context.go('/admin');
-        break;
-      case 3:
-        context.go('/profile');
-        break;
+    if (AppRouter.isAdmin) {
+      switch (index) {
+        case 0:
+          context.go('/dashboard');
+          break;
+        case 1:
+          context.go('/matching');
+          break;
+        case 2:
+          context.go('/admin');
+          break;
+        case 3:
+          context.go('/profile');
+          break;
+      }
+    } else {
+      switch (index) {
+        case 0:
+          context.go('/dashboard');
+          break;
+        case 1:
+          context.go('/matching');
+          break;
+        case 2:
+          context.go('/profile');
+          break;
+      }
     }
   }
 }
