@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'Verification_Sc.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -88,12 +88,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     setState(() => _isLoading = true);
     // Simulate network call
     await Future.delayed(const Duration(seconds: 2));
+
     if (mounted) {
       setState(() => _isLoading = false);
+
+      // Pehle message dikhayen
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Verification code sent!'),
           backgroundColor: Color(0xFF0D5F6B),
+        ),
+      );
+
+      // AB YAHAN NAVIGATION ADD KI HAI:
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerificationScreen(
+            email: _phoneController.text, // Phone number ko email parameter mein pass kar diya
+          ),
         ),
       );
     }
