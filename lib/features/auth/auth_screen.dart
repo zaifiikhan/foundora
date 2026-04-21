@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme.dart';
 import '../../nav.dart'; // Added to access AppRouter.isAdmin
+import 'forgot_Sc.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -150,7 +151,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> ForgotPasswordScreen()));
+                    },
                     child: Text(
                       "Forgot Password?",
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
