@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme.dart';
 import '../../nav.dart'; // Added to access AppRouter.isAdmin
-import 'forgot_Sc.dart';
+import 'forget_pass/forgot_Sc.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});

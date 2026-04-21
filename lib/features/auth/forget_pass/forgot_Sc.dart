@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:foundora/features/auth/forget_pass/verify_sc.dart';
+import 'verify_sc.dart'; // Added import for the 2nd screen
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +33,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -68,17 +70,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _emailController.dispose();
     _focusNode.dispose();
     _animationController.dispose();
     super.dispose();
   }
 
   Future<void> _onDone() async {
-    if (_phoneController.text.trim().isEmpty) {
+    // Basic check to ensure the field isn't empty and looks somewhat like an email
+    final emailText = _emailController.text.trim();
+    if (emailText.isEmpty || !emailText.contains('@')) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter your phone number'),
+          content: Text('Please enter a valid email address'),
           backgroundColor: Color(0xFF0D5F6B),
         ),
       );
@@ -88,12 +92,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     setState(() => _isLoading = true);
     // Simulate network call
     await Future.delayed(const Duration(seconds: 2));
+
     if (mounted) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Verification code sent!'),
-          backgroundColor: Color(0xFF0D5F6B),
+
+      // Navigate to the Verify Screen and pass the email address
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerifyScreen(email: emailText),
         ),
       );
     }
@@ -168,43 +175,51 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           topRight: Radius.circular(32),
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
+      child: CustomScrollView(
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: Column(
+                children: [
+                  const SizedBox(height: 40),
 
-            // ── Lock Icon ────────────────────────────────────────────────────
-            _buildLockIcon(),
+                  // ── Lock Icon ────────────────────────────────────────────────────
+                  _buildLockIcon(),
 
-            const SizedBox(height: 40),
+                  const SizedBox(height: 40),
 
-            // ── Phone Label ──────────────────────────────────────────────────
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Enter your phone number',
-                style: TextStyle(
-                  color: Colors.grey.shade700,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+                  // ── Email Label ──────────────────────────────────────────────────
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Enter your email address',
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // ── Text Field ───────────────────────────────────────────────────
+                  _buildEmailField(),
+
+                  const Spacer(),
+                  const SizedBox(height: 20),
+
+                  // ── Done Button ──────────────────────────────────────────────────
+                  _buildDoneButton(),
+
+                  const SizedBox(height: 36),
+                ],
               ),
             ),
-
-            const SizedBox(height: 12),
-
-            // ── Text Field ───────────────────────────────────────────────────
-            _buildPhoneField(),
-
-            const Spacer(),
-
-            // ── Done Button ──────────────────────────────────────────────────
-            _buildDoneButton(),
-
-            const SizedBox(height: 36),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -244,32 +259,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Center(
-              child: Text(
-                '?',
-                style: TextStyle(
-                  color: Color(0xFF4DB8C8),
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          // Lock shackle (top arc)
-          Positioned(
-            top: 18,
-            child: Container(
-              width: 36,
-              height: 24,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: const Color(0xFF1A1A2E),
-                  width: 5,
-                ),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(18),
-                  topRight: Radius.circular(18),
-                ),
-                color: Colors.transparent,
+              child: Icon(
+                Icons.mail_outline_rounded,
+                color: Color(0xFF4DB8C8),
+                size: 36,
               ),
             ),
           ),
@@ -278,8 +271,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     );
   }
 
-  // ── Phone Field ──────────────────────────────────────────────────────────────
-  Widget _buildPhoneField() {
+  // ── Email Field ──────────────────────────────────────────────────────────────
+  Widget _buildEmailField() {
     return Container(
       decoration: BoxDecoration(
         color: _textFieldBg,
@@ -293,16 +286,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         ],
       ),
       child: TextField(
-        controller: _phoneController,
+        controller: _emailController,
         focusNode: _focusNode,
-        keyboardType: TextInputType.phone,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        keyboardType: TextInputType.emailAddress,
         style: const TextStyle(
           fontSize: 15,
           color: Color(0xFF1A1A2E),
         ),
         decoration: InputDecoration(
-          hintText: 'Your Number',
+          hintText: 'Your Email',
           hintStyle: TextStyle(
             color: Colors.grey.shade400,
             fontSize: 14,
