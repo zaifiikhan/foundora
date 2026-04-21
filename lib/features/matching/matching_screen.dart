@@ -14,7 +14,7 @@ class AiMatchingScreen extends StatefulWidget {
 
 class _AiMatchingScreenState extends State<AiMatchingScreen> {
   String _selectedCategory = "All Matches";
-  final List<String> _categories = ["All Matches", "High Confidence", "Electronics", "Accessories", "Pets", "Wallets", "Keys", "Documents", "Others", "Other"];
+  final List<String> _categories = ["All Matches", "High Confidence", "Electronics", "Accessories", "Pets", "Wallets", "Keys", "Documents", "Others"];
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +22,13 @@ class _AiMatchingScreenState extends State<AiMatchingScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showReportOptions(context),
-        backgroundColor: Theme.of(context).primaryColor,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+            side: const BorderSide(color: Colors.black, width: 2)),
+        backgroundColor: const Color(0xFFB9710D),
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        icon: const Icon(Icons.add),
-        label: const Text("Report New"),
+        icon: const Icon(Icons.add, color: Colors.white,),
+        label: const Text("Report New", style: TextStyle(color: Colors.white),),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -59,16 +62,22 @@ class _AiMatchingScreenState extends State<AiMatchingScreen> {
                         ),
                       ],
                     ),
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Theme.of(context).dividerColor),
-                      ),
-                      child: Center(
-                        child: Icon(Icons.tune_rounded, size: 20, color: Theme.of(context).colorScheme.onSurface),
+
+                    // MODIFIED: Calls the bottom sheet just like the dashboard!
+                    InkWell(
+                      onTap: () => showNotificationsSheet(context),
+                      borderRadius: BorderRadius.circular(22),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Theme.of(context).dividerColor),
+                        ),
+                        child: Center(
+                          child: Icon(Icons.notifications_outlined, size: 22, color: Theme.of(context).colorScheme.onSurface),
+                        ),
                       ),
                     ),
                   ],
@@ -102,12 +111,12 @@ class _AiMatchingScreenState extends State<AiMatchingScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.psychology_rounded, color: Theme.of(context).colorScheme.onPrimary, size: 28),
+                        Icon(Icons.psychology_rounded, color: Colors.white, size: 28),
                         const SizedBox(width: AppSpacing.sm),
                         Text(
                           "AI Analysis Complete",
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -117,7 +126,7 @@ class _AiMatchingScreenState extends State<AiMatchingScreen> {
                     Text(
                       "We match your Lost reports against Found reports using title/description/category/location signals.",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -130,12 +139,12 @@ class _AiMatchingScreenState extends State<AiMatchingScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.bolt, color: Theme.of(context).colorScheme.onPrimary, size: 16),
+                          Icon(Icons.bolt, color: Colors.white, size: 16),
                           const SizedBox(width: AppSpacing.sm),
                           Text(
                             "Updates live as you post reports",
                             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary,
+                              color: Colors.white,
                             ),
                           ),
                         ],
@@ -159,7 +168,7 @@ class _AiMatchingScreenState extends State<AiMatchingScreen> {
                         label: Text(
                           cat,
                           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: isSelected ? Colors.orange : Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -709,4 +718,57 @@ class _MatchItemCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// Optional: Shared helper function included here so it runs instantly.
+// If you plan to use this across many files, consider moving it to a 'utils/bottom_sheets.dart' file later!
+void showNotificationsSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Theme.of(context).colorScheme.surface,
+    showDragHandle: true,
+    builder: (ctx) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+                "Notifications",
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: CircleAvatar(
+                  backgroundColor: Colors.orange.shade100,
+                  child: const Icon(Icons.auto_awesome, color: Colors.orange)
+              ),
+              title: const Text("High Match Found!"),
+              subtitle: const Text("We found a 95% match for your reported wallet."),
+              onTap: () => ctx.pop(),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                  backgroundColor: Colors.green.shade100,
+                  child: const Icon(Icons.check_circle, color: Colors.green)
+              ),
+              title: const Text("Item Claimed"),
+              subtitle: const Text("Someone claimed the keys you found."),
+              onTap: () => ctx.pop(),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                  backgroundColor: Colors.blue.shade100,
+                  child: const Icon(Icons.info_outline, color: Colors.blue)
+              ),
+              title: const Text("Welcome to Foundora"),
+              subtitle: const Text("Keep your campus lost-and-found clean and smart!"),
+              onTap: () => ctx.pop(),
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

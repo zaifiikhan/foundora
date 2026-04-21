@@ -10,6 +10,8 @@ import 'features/item_details/item_details_screen.dart';
 import 'features/claim/claim_verification_screen.dart';
 import 'features/admin/admin_screen.dart';
 import 'features/profile/profile_screen.dart';
+import 'features/profile/personal_info.dart';
+import 'features/profile/security_sc.dart'; // Added import for security screen
 
 class AppRouter {
   // Global mock state to determine if the logged-in user is an admin
@@ -71,6 +73,15 @@ class AppRouter {
           return ClaimVerificationScreen(id: id);
         },
       ),
+      // Individual routes outside ShellRoute
+      GoRoute(
+        path: '/personal-info',
+        builder: (context, state) => const PersonalInfoScreen(),
+      ),
+      GoRoute(
+        path: '/security',
+        builder: (context, state) => const SecurityScreen(), // Added security route
+      ),
     ],
   );
 }
@@ -82,7 +93,6 @@ class ScaffoldWithBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dynamically build items based on admin status
     final List<BottomNavigationBarItem> navItems = [
       const BottomNavigationBarItem(
         icon: Icon(Icons.home_outlined),
@@ -94,7 +104,7 @@ class ScaffoldWithBottomNavBar extends StatelessWidget {
         activeIcon: Icon(Icons.auto_awesome_rounded),
         label: 'AI Match',
       ),
-      if (AppRouter.isAdmin) // Only show if user is an admin
+      if (AppRouter.isAdmin)
         const BottomNavigationBarItem(
           icon: Icon(Icons.admin_panel_settings_outlined),
           activeIcon: Icon(Icons.admin_panel_settings_rounded),
@@ -123,7 +133,6 @@ class ScaffoldWithBottomNavBar extends StatelessWidget {
     if (location.startsWith('/dashboard')) return 0;
     if (location.startsWith('/matching')) return 1;
 
-    // Adjust indexes based on whether the Admin tab is present
     if (AppRouter.isAdmin) {
       if (location.startsWith('/admin')) return 2;
       if (location.startsWith('/profile')) return 3;
@@ -136,30 +145,16 @@ class ScaffoldWithBottomNavBar extends StatelessWidget {
   void _onItemTapped(int index, BuildContext context) {
     if (AppRouter.isAdmin) {
       switch (index) {
-        case 0:
-          context.go('/dashboard');
-          break;
-        case 1:
-          context.go('/matching');
-          break;
-        case 2:
-          context.go('/admin');
-          break;
-        case 3:
-          context.go('/profile');
-          break;
+        case 0: context.go('/dashboard'); break;
+        case 1: context.go('/matching'); break;
+        case 2: context.go('/admin'); break;
+        case 3: context.go('/profile'); break;
       }
     } else {
       switch (index) {
-        case 0:
-          context.go('/dashboard');
-          break;
-        case 1:
-          context.go('/matching');
-          break;
-        case 2:
-          context.go('/profile');
-          break;
+        case 0: context.go('/dashboard'); break;
+        case 1: context.go('/matching'); break;
+        case 2: context.go('/profile'); break;
       }
     }
   }

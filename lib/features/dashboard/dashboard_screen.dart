@@ -22,11 +22,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           _showReportOptions(context);
         },
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-            side: BorderSide(color: Colors.black,width: 2)),
-        backgroundColor: Color(0xfffB9710D),
+            borderRadius: BorderRadius.circular(15),
+            side: const BorderSide(color: Colors.black, width: 2)),
+        backgroundColor: const Color(0xFFB9710D),
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        icon: const Icon(Icons.add,color: Colors.white,),
+        icon: const Icon(Icons.add, color: Colors.white,),
         label: const Text("Report Item", style: TextStyle(color: Colors.white),),
       ),
       body: SafeArea(
@@ -58,48 +58,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ],
                     ),
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Theme.of(context).dividerColor),
-                      ),
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Icon(
-                              Icons.notifications_none_rounded,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              size: 24,
+
+                    // MODIFIED: Wrapped in InkWell to trigger the notification sheet
+                    InkWell(
+                      onTap: () => showNotificationsSheet(context),
+                      borderRadius: BorderRadius.circular(24),
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Theme.of(context).dividerColor),
+                        ),
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Icon(
+                                Icons.notifications_none_rounded,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 24,
+                              ),
                             ),
-                          ),
-                          Positioned(
-                            top: 10,
-                            right: 10,
-                            child: Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.error,
-                                shape: BoxShape.circle,
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 16,
-                                minHeight: 16,
-                              ),
-                              child: Text(
-                                '3',
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onError,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
+                            Positioned(
+                              top: 10,
+                              right: 10,
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.error,
+                                  shape: BoxShape.circle,
                                 ),
-                                textAlign: TextAlign.center,
+                                constraints: const BoxConstraints(
+                                  minWidth: 16,
+                                  minHeight: 16,
+                                ),
+                                child: Text(
+                                  '3',
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onError,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -238,7 +244,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         label: Text(
                           cat,
                           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            // Sets the text color to light orange when tapped
                             color: isSelected ? Colors.orange.shade300 : Theme.of(context).colorScheme.onSurface,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           ),
@@ -295,7 +300,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       title: "Golden Retriever",
                       location: "Central Park, NY",
                       date: "2 hours ago",
-                      // Placeholder color/icon instead of image for now
                       color: Colors.orange.shade100,
                       icon: Icons.pets,
                     ),
@@ -487,4 +491,57 @@ class _ItemCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// MODIFIED: Added this helper function so both screens can use it.
+// You can leave it here, or move it to a shared file later!
+void showNotificationsSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Theme.of(context).colorScheme.surface,
+    showDragHandle: true,
+    builder: (ctx) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+                "Notifications",
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: CircleAvatar(
+                  backgroundColor: Colors.orange.shade100,
+                  child: const Icon(Icons.auto_awesome, color: Colors.orange)
+              ),
+              title: const Text("High Match Found!"),
+              subtitle: const Text("We found a 95% match for your reported wallet."),
+              onTap: () => ctx.pop(),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                  backgroundColor: Colors.green.shade100,
+                  child: const Icon(Icons.check_circle, color: Colors.green)
+              ),
+              title: const Text("Item Claimed"),
+              subtitle: const Text("Someone claimed the keys you found."),
+              onTap: () => ctx.pop(),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                  backgroundColor: Colors.blue.shade100,
+                  child: const Icon(Icons.info_outline, color: Colors.blue)
+              ),
+              title: const Text("Welcome to Foundora"),
+              subtitle: const Text("Keep your campus lost-and-found clean and smart!"),
+              onTap: () => ctx.pop(),
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }
